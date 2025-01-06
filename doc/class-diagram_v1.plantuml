@@ -1,0 +1,245 @@
+@startuml
+
+package "model" {
+    enum Season {
+        SUMMER
+        WINTER
+    }
+
+    enum Sky {
+        SUNNY
+        PARTLY_CLOUDY
+        CLOUDY
+        SNOW
+        RAIN
+    }
+
+    enum Direction {
+        N
+        NE
+        E
+        SE
+        S
+        SW
+        W
+        NW
+    }
+
+    class GeoPoint {
+        -Double lat
+        -Double long
+    }
+
+    class Itinerary {
+        -GeoPoint start
+        -GeoPoint end
+        -String gpxId
+    }
+
+    class Altitudes {
+        -Integer max
+        -Integer min
+        -Integer total
+    }
+
+    class Temperature {
+        -Integer top
+        -Integer bottom
+    }
+
+    class Iso {
+        -Integer night
+        -Integer day
+    }
+
+    class Wind {
+        -Direction direction
+        -Integer speed
+    }
+
+    class Meteo {
+        -Sky sky
+        -Temperature temperature
+        -Iso iso
+        -Wind wind
+        -Integer bera
+    }
+
+    class Rope {
+        -Double diameter
+        -Integer length
+    }
+
+    class Protections {
+        -List<Rope> ropes
+        -Integer nuts
+        -List<Double> cams
+        -Integer screws
+    }
+
+    class JourneyPOJO {
+        -@Id String id
+        -String title
+        -Date date
+        -Season season
+        -List<String> members
+        -List<String> pictures
+        -Itinerary itinerary
+        -Altitudes altitudes
+        -Meteo meteo
+        -Protections protections
+        -String miscellaneous
+    }
+
+    class JourneyDTO {
+        -String id
+        -String title
+        -Date date
+        -Season season
+        -List<String> members
+        -List<String> pictures
+        -Itinerary itinerary
+        -Altitudes altitudes
+        -Meteo meteo
+        -Protections protections
+        -String miscellaneous
+    }
+
+    class UserPOJO {
+        -@Id String id
+        -String email
+        -String password
+        -String name
+    }
+
+    class UserDTO {
+        -String id
+        -String email
+        -String name
+    }
+
+    ' Model relationships
+    JourneyPOJO --> Season
+    JourneyPOJO --> Itinerary
+    JourneyPOJO --> Altitudes
+    JourneyPOJO --> Meteo
+    JourneyPOJO --> Protections
+    
+    Itinerary --> GeoPoint : start, end
+    Meteo --> Sky
+    Meteo --> Temperature
+    Meteo --> Iso
+    Meteo --> Wind
+    Wind --> Direction
+    Protections --> Rope
+}
+
+package "repository" {
+    interface JourneyRepository {
+        +findAll(): List<JourneyPOJO>
+        +findById(String id): Optional<JourneyPOJO>
+        +findByDateAfter(Date date): List<JourneyPOJO>
+        +findByDateBefore(Date date): List<JourneyPOJO>
+        +save(JourneyPOJO journey): JourneyPOJO
+        +delete(String id): void
+    }
+
+    interface UserRepository {
+        +findByEmail(String email): Optional<UserPOJO>
+        +save(UserPOJO user): UserPOJO
+    }
+
+    class MongoJourneyRepository {
+        +findAll(): List<JourneyPOJO>
+        +findById(String id): Optional<JourneyPOJO>
+        +save(JourneyPOJO journey): JourneyPOJO
+        +delete(String id): void
+    }
+
+    class MongoUserRepository {
+        +findByEmail(String email): Optional<UserPOJO>
+        +save(UserPOJO user): UserPOJO
+    }
+
+    interface RepositoryFactory {
+        +getJourneyRepository(): JourneyRepository
+        +getUserRepository(): UserRepository
+    }
+
+    class DefaultRepositoryFactory {
+        +getJourneyRepository(): JourneyRepository
+        +getUserRepository(): UserRepository
+    }
+}
+
+package "service" {
+    interface JourneyService {
+        +getAllJourneys(): List<JourneyDTO>
+        +getJourneyById(String id): JourneyDTO
+        +createJourney(JourneyDTO journey): JourneyDTO
+        +updateJourney(String id, JourneyDTO journey): JourneyDTO
+        +deleteJourney(String id): void
+    }
+
+    interface UserService {
+        +authenticate(String email, String password): String
+        +register(UserDTO user): UserDTO
+    }
+
+    interface CloudinaryService {
+        +uploadImage(byte[] image): String
+        +uploadGpx(byte[] gpx): String
+        +deleteFile(String publicId): void
+    }
+
+    class JourneyServiceImpl {
+        -JourneyRepository journeyRepository
+        -CloudinaryService cloudinaryService
+    }
+
+    class UserServiceImpl {
+        -UserRepository userRepository
+    }
+
+    class CloudinaryServiceImpl {
+        -Cloudinary cloudinary
+    }
+}
+
+package "controller" {
+    class JourneyController {
+        -JourneyService journeyService
+        +getAllJourneys(): List<JourneyDTO>
+        +getJourneyById(String id): JourneyDTO
+        +createJourney(JourneyDTO journey): JourneyDTO
+        +updateJourney(String id, JourneyDTO journey): JourneyDTO
+        +deleteJourney(String id): void
+        +uploadFiles(String id, MultipartFile[] files): void
+    }
+
+    class UserController {
+        -UserService userService
+        +login(LoginRequest req): String
+        +register(UserDTO user): UserDTO
+    }
+}
+
+' Relationships
+JourneyRepository <|.. MongoJourneyRepository
+UserRepository <|.. MongoUserRepository
+RepositoryFactory <|.. DefaultRepositoryFactory
+JourneyService <|.. JourneyServiceImpl
+UserService <|.. UserServiceImpl
+CloudinaryService <|.. CloudinaryServiceImpl
+
+DefaultRepositoryFactory ..> MongoJourneyRepository
+DefaultRepositoryFactory ..> MongoUserRepository
+
+JourneyServiceImpl --> JourneyRepository
+JourneyServiceImpl --> CloudinaryService
+UserServiceImpl --> UserRepository
+
+JourneyController --> JourneyService
+UserController --> UserService
+
+@enduml
