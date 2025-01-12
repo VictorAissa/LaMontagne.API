@@ -1,16 +1,17 @@
 package com.victor.lamontagne_api.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class UserDTO {
     private String id;
 
     @NotBlank
     private String email;
+
+    @NotBlank
+    private String password;
 
     @NotBlank
     private String name;

@@ -3,14 +3,14 @@ package com.victor.lamontagne_api.model.dto;
 import com.victor.lamontagne_api.model.*;
 import com.victor.lamontagne_api.model.pojo.Journey;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
+@Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class JourneyDTO {
     private String id;
 

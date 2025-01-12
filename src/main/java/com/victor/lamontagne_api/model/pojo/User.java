@@ -23,6 +23,9 @@ public class User {
     private String email;
 
     @NotBlank
+    private String password;
+
+    @NotBlank
     private String name;
 
     @CreatedDate
