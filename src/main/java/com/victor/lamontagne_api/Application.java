@@ -16,6 +16,7 @@ public class Application {
 
     static {
         dotenv = Dotenv.load();
+        System.setProperty("MONGO_URL", dotenv.get("MONGO_URL"));
     }
 
     public static void main(String[] args) {

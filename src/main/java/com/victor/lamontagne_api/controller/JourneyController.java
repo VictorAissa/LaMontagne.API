@@ -1,8 +1,10 @@
 package com.victor.lamontagne_api.controller;
 
+import com.victor.lamontagne_api.exception.NotImplementedException;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.service.JourneyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,35 +20,44 @@ public class JourneyController {
         this.journeyService = journeyService;
     }
 
-    @GetMapping
-    public String getAllJourneys() { // List<JourneyDTO>
-        String test = "toutes les courses !";
-        return test;
-        //return journeyService.getAllJourneys();
+    @GetMapping("/user/{userId}")
+    public List<JourneyDTO> getAllJourneys(@PathVariable String userId) {
+        return journeyService.getAllJourneys(userId);
     }
 
     @GetMapping("/{id}")
-    public JourneyDTO getJourneyById(String id) {
+    public JourneyDTO getJourneyById(@PathVariable String id) {
         return journeyService.getJourneyById(id);
     }
 
-    @PostMapping
-    public JourneyDTO createJourney(JourneyDTO journey) {
-        return journeyService.createJourney(journey);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public JourneyDTO createJourney(
+            @RequestPart("journeyData") JourneyDTO journey,
+            @RequestPart(value = "files", required = false) MultipartFile[] files
+    ) {
+        return journeyService.createJourney(journey, files);
     }
 
-    @PutMapping("/{id}")
-    public JourneyDTO updateJourney(String id, JourneyDTO journey) {
-        return journeyService.updateJourney(id, journey);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public JourneyDTO updateJourney(
+            @PathVariable String id,
+            @RequestPart("journeyData") JourneyDTO journey,
+            @RequestPart(value = "files", required = false) MultipartFile[] files
+    ) {
+        return journeyService.updateJourney(id, journey, files);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteJourney(String id) {
+    public void deleteJourney(@PathVariable String id) {
         journeyService.deleteJourney(id);
     }
 
     @PostMapping("/{id}/files")
-    public void uploadFiles(String id, MultipartFile[] files) {
-        //TODO
+    public void uploadFiles(
+            @PathVariable String id,
+            @RequestParam("files") MultipartFile[] files
+    ) {
+        //journeyService.uploadFiles(id, files);
+        throw new NotImplementedException("upload files not implemented");
     }
 }

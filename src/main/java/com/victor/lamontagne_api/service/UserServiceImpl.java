@@ -35,8 +35,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO register(UserDTO userDto) {
-        String hashedPassword = BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt());
-        // TODO: implémenter la création de l'utilisateur
-        return null;
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        User user = new User();
+        user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
+        user.setPassword(BCrypt.hashpw(userDto.getPassword(), BCrypt.gensalt()));
+
+        User savedUser = userRepository.save(user);
+
+        return new UserDTO(
+                savedUser.getId(),
+                savedUser.getEmail(),
+                savedUser.getName()
+        );
     }
 }

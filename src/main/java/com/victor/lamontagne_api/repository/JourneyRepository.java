@@ -9,8 +9,9 @@ import java.util.Optional;
 public interface JourneyRepository{
     List<Journey> findAll();
     Optional<Journey> findById(String id);
-    List<Journey> findByDateAfter(Date date);
-    List<Journey> findByDateBefore(Date date);
+    List<Journey> findAllByUserId(String userId);
+    List<Journey> findByDateAfterAndUserId(Date date, String userId);
+    List<Journey> findByDateBeforeAndUserId(Date date, String userId);
     Journey save(Journey journey);
     void delete(String id);
 }
