@@ -3,6 +3,7 @@ package com.victor.lamontagne_api.controller;
 import com.victor.lamontagne_api.exception.NotImplementedException;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.service.JourneyService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -26,30 +27,43 @@ public class JourneyController {
     }
 
     @GetMapping("/{id}")
-    public JourneyDTO getJourneyById(@PathVariable String id) {
-        return journeyService.getJourneyById(id);
+    public JourneyDTO getJourneyById(@PathVariable String id, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        return journeyService.getJourneyById(id, userId);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public JourneyDTO createJourney(
             @RequestPart("journeyData") JourneyDTO journey,
-            @RequestPart(value = "files", required = false) MultipartFile[] files
+            @RequestPart(value = "files", required = false) MultipartFile[] files,
+            HttpServletRequest request
     ) {
-        return journeyService.createJourney(journey, files);
+        String userId = (String) request.getAttribute("userId");
+        return journeyService.createJourney(journey, files, userId);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public JourneyDTO updateJourney(
-            @PathVariable String id,
             @RequestPart("journeyData") JourneyDTO journey,
-            @RequestPart(value = "files", required = false) MultipartFile[] files
+            @RequestPart(value = "files", required = false) MultipartFile[] files,
+            HttpServletRequest request
     ) {
-        return journeyService.updateJourney(id, journey, files);
+        String userId = (String) request.getAttribute("userId");
+        return journeyService.updateJourney(journey.getId(), journey, files, userId);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteJourney(@PathVariable String id) {
-        journeyService.deleteJourney(id);
+    public void deleteJourney(@PathVariable String id, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        journeyService.deleteJourney(id, userId);
+    }
+
+    @DeleteMapping("/{id}/files")
+    public void deleteFiles(
+            @PathVariable String id,
+            @RequestBody List<String> fileUrls
+    ) {
+        journeyService.deleteFiles(id, fileUrls);
     }
 
     @PostMapping("/{id}/files")
@@ -60,4 +74,5 @@ public class JourneyController {
         //journeyService.uploadFiles(id, files);
         throw new NotImplementedException("upload files not implemented");
     }
+
 }

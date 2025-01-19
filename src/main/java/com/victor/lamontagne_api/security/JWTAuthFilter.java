@@ -8,12 +8,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+            "/api/user/login",
+            "/api/user/register"
+    );
 
-    public JwtAuthFilter(JWTService jwtService) {
+    public JWTAuthFilter(JWTService jwtService) {
         this.jwtService = jwtService;
     }
 
@@ -21,10 +27,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (isPublicPath(request.getRequestURI())) {
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -36,5 +46,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
+    }
+
+    private boolean isPublicPath(String requestURI) {
+        return PUBLIC_PATHS.stream().anyMatch(requestURI::startsWith);
     }
 }

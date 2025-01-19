@@ -51,7 +51,6 @@ public class MongoJourneyRepository implements JourneyRepository {
         return mongoTemplate.find(query, Journey.class);
     }
 
-
     @Override
     public Journey save(Journey journey) {
         return mongoTemplate.save(journey);

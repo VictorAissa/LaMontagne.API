@@ -1,6 +1,7 @@
 package com.victor.lamontagne_api.service;
 
 import com.victor.lamontagne_api.exception.ResourceNotFoundException;
+import com.victor.lamontagne_api.exception.UnauthorizedException;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.model.pojo.Journey;
 import com.victor.lamontagne_api.repository.JourneyRepository;
@@ -35,14 +36,21 @@ public class JourneyServiceImpl implements JourneyService {
     }
 
     @Override
-    public JourneyDTO getJourneyById(String id) {
-        return journeyRepository.findById(id)
-                .map(this::toDto)
+    public JourneyDTO getJourneyById(String id, String userId) {
+        Journey journey = journeyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Journey not found with id: " + id));
+
+        if (!journey.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You don't have access to this journey");
+        }
+
+        return toDto(journey);
     }
 
     @Override
-    public JourneyDTO createJourney(JourneyDTO journeyDto, MultipartFile[] files) {
+    public JourneyDTO createJourney(JourneyDTO journeyDto, MultipartFile[] files, String userId) {
+        journeyDto.setUserId(userId);
+
         if (files != null && files.length > 0) {
             List<String> pictureUrls = new ArrayList<>();
             String gpxUrl = null;
@@ -72,9 +80,13 @@ public class JourneyServiceImpl implements JourneyService {
     }
 
     @Override
-    public JourneyDTO updateJourney(String id, JourneyDTO journeyDto, MultipartFile[] files) {
+    public JourneyDTO updateJourney(String id, JourneyDTO journeyDto, MultipartFile[] files, String userId) {
         Journey existingJourney = journeyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Journey not found"));
+
+        if (!existingJourney.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You don't have access to this journey");
+        }
 
         if (files != null && files.length > 0) {
             List<String> pictureUrls = new ArrayList<>(journeyDto.getPictures());
@@ -106,9 +118,13 @@ public class JourneyServiceImpl implements JourneyService {
     }
 
     @Override
-    public void deleteJourney(String id) {
+    public void deleteJourney(String id, String userId) {
         Journey journey = journeyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Journey not found"));
+
+        if (!journey.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You don't have access to this journey");
+        }
 
         if (journey.getPictures() != null) {
             for (String pictureUrl : journey.getPictures()) {
@@ -121,6 +137,26 @@ public class JourneyServiceImpl implements JourneyService {
         }
 
         journeyRepository.delete(id);
+    }
+
+    @Override
+    public void deleteFiles(String journeyId, List<String> fileUrls) {
+        Journey journey = journeyRepository.findById(journeyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Journey not found"));
+
+        for (String fileUrl : fileUrls) {
+            cloudinaryService.deleteFile(cloudinaryService.extractPublicId(fileUrl));
+        }
+
+        for (String fileUrl : fileUrls) {
+            if (fileUrl.endsWith(".gpx")) {
+                journey.getItinerary().setGpx(null);
+            } else {
+                journey.getPictures().remove(fileUrl);
+            }
+        }
+
+        journeyRepository.save(journey);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findByEmail(email);
 
         if (user.isPresent() && BCrypt.checkpw(password, user.get().getPassword())) {
-            return jwtService.generateToken(email);
+            return jwtService.generateToken(user.get().getId());
         }
         throw new UnauthorizedException("Invalid credentials");
     }

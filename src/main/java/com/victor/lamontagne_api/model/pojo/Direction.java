@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.model;
+package com.victor.lamontagne_api.model.pojo;
 
 public enum Direction {
     N,

@@ -17,9 +17,9 @@ public class JWTService {
         this.secretKey = Objects.requireNonNull(secretKey);
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String userId) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 24*60*60*1000)) // 24h
                 .signWith(secretKey)

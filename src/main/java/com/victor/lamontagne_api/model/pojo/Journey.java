@@ -1,6 +1,5 @@
 package com.victor.lamontagne_api.model.pojo;
 
-import com.victor.lamontagne_api.model.*;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
