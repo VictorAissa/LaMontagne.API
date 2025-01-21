@@ -42,7 +42,10 @@ public class JourneyController {
         return journeyService.createJourney(journey, files, userId);
     }
 
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public JourneyDTO updateJourney(
             @RequestPart("journeyData") JourneyDTO journey,
             @RequestPart(value = "files", required = false) MultipartFile[] files,

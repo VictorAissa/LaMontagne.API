@@ -5,8 +5,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor public class UserDTO {
-    @NonNull
+public class UserDTO {
     private String id;
 
     @NotBlank
@@ -19,4 +18,10 @@ import lombok.*;
     @NotBlank
     @NonNull
     private String name;
+
+    public UserDTO(String id, String email, String name) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+    }
 }

@@ -17,11 +17,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @ResponseBody
     public String login(@RequestBody LoginRequest req) {
         return userService.authenticate(req.email(), req.password());
     }
 
     @PostMapping("/register")
+    @ResponseBody
     public UserDTO register(@RequestBody UserDTO user) {
         return userService.register(user);
     }
