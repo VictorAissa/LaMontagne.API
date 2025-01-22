@@ -1,6 +1,5 @@
 package com.victor.lamontagne_api.config;
 
-import com.victor.lamontagne_api.Application;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +10,8 @@ import java.util.Base64;
 
 @Configuration
 public class JWTConfig {
-    private final String secretKey = Application.getDotenv().get("JWT_SECRET");
+    @Value("${app.security.jwt.secret}")
+    private String secretKey;
 
     @Bean
     public SecretKey jwtSecretKey() {

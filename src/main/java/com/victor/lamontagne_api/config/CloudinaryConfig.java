@@ -1,14 +1,14 @@
 package com.victor.lamontagne_api.config;
 
 import com.cloudinary.Cloudinary;
-import com.victor.lamontagne_api.Application;
-import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class CloudinaryConfig {
-    private final String cloudinaryUrl = Application.getDotenv().get("CLOUDINARY_URL");
+    @Value("${app.cloudinary.url}")
+    private String cloudinaryUrl;
 
     @Bean
     public Cloudinary cloudinary() {
