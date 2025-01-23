@@ -1,4 +1,4 @@
-FROM maven:eclipse-temurin-21-alpine
+FROM maven:eclipse-temurin-17-alpine
 LABEL authors="victor"
 EXPOSE 8080
 COPY target/*.jar app.jar
