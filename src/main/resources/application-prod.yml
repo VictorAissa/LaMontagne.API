@@ -1,0 +1,11 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URL}
+
+app:
+  security:
+    jwt:
+      secret: ${JWT_SECRET}
+  cloudinary:
+    url: ${CLOUDINARY_URL}
