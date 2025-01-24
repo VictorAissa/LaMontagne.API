@@ -33,7 +33,7 @@ package "model" {
     class Itinerary {
         -GeoPoint start
         -GeoPoint end
-        -String gpxId
+        -String gpx
     }
 
     class Altitudes {
@@ -77,10 +77,11 @@ package "model" {
         -Integer screws
     }
 
-    class JourneyPOJO {
+    class Journey {
         -@Id String id
         -String title
         -Date date
+        -String userId
         -Season season
         -List<String> members
         -List<String> pictures
@@ -95,6 +96,7 @@ package "model" {
         -String id
         -String title
         -Date date
+        -String userId
         -Season season
         -List<String> members
         -List<String> pictures
@@ -105,7 +107,7 @@ package "model" {
         -String miscellaneous
     }
 
-    class UserPOJO {
+    class User {
         -@Id String id
         -String email
         -String password
@@ -115,15 +117,16 @@ package "model" {
     class UserDTO {
         -String id
         -String email
+        -String password
         -String name
     }
 
     ' Model relationships
-    JourneyPOJO --> Season
-    JourneyPOJO --> Itinerary
-    JourneyPOJO --> Altitudes
-    JourneyPOJO --> Meteo
-    JourneyPOJO --> Protections
+    Journey --> Season
+    Journey --> Itinerary
+    Journey --> Altitudes
+    Journey --> Meteo
+    Journey --> Protections
     
     Itinerary --> GeoPoint : start, end
     Meteo --> Sky
@@ -136,29 +139,24 @@ package "model" {
 
 package "repository" {
     interface JourneyRepository {
-        +findAll(): List<JourneyPOJO>
-        +findById(String id): Optional<JourneyPOJO>
-        +findByDateAfter(Date date): List<JourneyPOJO>
-        +findByDateBefore(Date date): List<JourneyPOJO>
-        +save(JourneyPOJO journey): JourneyPOJO
+        +findAll(): List<Journey>
+        +findById(String id): Optional<Journey>
+        +findAllByUserId(String userId): List<Journey>
+        +findByDateAfterAndUserId(Date date, String userId): List<Journey>
+        +findByDateBeforeAndUserId(Date date, String userId): List<Journey>
+        +save(Journey journey): Journey
         +delete(String id): void
     }
 
     interface UserRepository {
-        +findByEmail(String email): Optional<UserPOJO>
-        +save(UserPOJO user): UserPOJO
+        +findByEmail(String email): Optional<User>
+        +save(User user): User
     }
 
     class MongoJourneyRepository {
-        +findAll(): List<JourneyPOJO>
-        +findById(String id): Optional<JourneyPOJO>
-        +save(JourneyPOJO journey): JourneyPOJO
-        +delete(String id): void
     }
 
     class MongoUserRepository {
-        +findByEmail(String email): Optional<UserPOJO>
-        +save(UserPOJO user): UserPOJO
     }
 
     interface RepositoryFactory {
@@ -174,11 +172,14 @@ package "repository" {
 
 package "service" {
     interface JourneyService {
-        +getAllJourneys(): List<JourneyDTO>
-        +getJourneyById(String id): JourneyDTO
-        +createJourney(JourneyDTO journey): JourneyDTO
-        +updateJourney(String id, JourneyDTO journey): JourneyDTO
-        +deleteJourney(String id): void
+        +getAllJourneys(String userId): List<JourneyDTO>
+        +getJourneyById(String id, String userId): JourneyDTO
+        +createJourney(JourneyDTO journey, MultipartFile[] files, String userId): JourneyDTO
+        +updateJourney(String id, JourneyDTO journey, MultipartFile[] files, String userId): JourneyDTO
+        +deleteJourney(String id, String userId): void
+        +void deleteFiles(String journeyId, List<String> fileUrls);
+        +getPlannedJourneys(String userId): List<JourneyDTO>
+        +getPastJourneys(String userId): List<JourneyDTO>
     }
 
     interface UserService {
@@ -190,11 +191,15 @@ package "service" {
         +uploadImage(byte[] image): String
         +uploadGpx(byte[] gpx): String
         +deleteFile(String publicId): void
+        +extractPublicId(String cloudinaryUrl): String
     }
 
     class JourneyServiceImpl {
         -JourneyRepository journeyRepository
         -CloudinaryService cloudinaryService
+
+        -toDto(Journey journey): JourneyDTO
+        -toPojo(JourneyDTO journeyDto): Journey
     }
 
     class UserServiceImpl {
@@ -209,11 +214,12 @@ package "service" {
 package "controller" {
     class JourneyController {
         -JourneyService journeyService
-        +getAllJourneys(): List<JourneyDTO>
-        +getJourneyById(String id): JourneyDTO
-        +createJourney(JourneyDTO journey): JourneyDTO
-        +updateJourney(String id, JourneyDTO journey): JourneyDTO
-        +deleteJourney(String id): void
+        +getAllJourneys(String userId): List<JourneyDTO>
+        +getJourneyById(String id, HttpServletRequest request): JourneyDTO
+        +createJourney(JourneyDTO journey, MultipartFile[] files, HttpServletRequest request): JourneyDTO
+        +updateJourney(JourneyDTO journey, MultipartFile[] files, HttpServletRequest request): JourneyDTO
+        +deleteJourney(String id, HttpServletRequest request): void
+        +deleteFiles(String id, List<String> fileUrls): void
         +uploadFiles(String id, MultipartFile[] files): void
     }
 
