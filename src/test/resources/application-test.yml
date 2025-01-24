@@ -1,0 +1,11 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://test:test@localhost:27017/test
+
+app:
+  security:
+    jwt:
+      secret: VGVzdFNlY3JldEtleUZvclRlc3RpbmdQdXJwb3Nlc09ubHk=
+  cloudinary:
+    url: cloudinary://test:test@test
