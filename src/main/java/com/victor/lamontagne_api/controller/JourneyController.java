@@ -13,7 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/journey")
-@CrossOrigin
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowCredentials = "true",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 public class JourneyController {
     private final JourneyService journeyService;
 
