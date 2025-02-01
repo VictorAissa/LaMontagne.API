@@ -14,6 +14,7 @@ public class UserController {
 
     @Autowired
     public UserController(UserService userService) {
+        System.out.println("==== Requête reçue sur /api/user/login ====");
         this.userService = userService;
     }
 
