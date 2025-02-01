@@ -13,28 +13,18 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // On spécifie exactement l'origin de ton front React
+        // Configuration explicite pour le préflight
         config.addAllowedOrigin("http://localhost:5173");
-
-        // On autorise l'envoi de credentials si nécessaire
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
         config.setAllowCredentials(true);
 
-        // On autorise spécifiquement les headers nécessaires
-        config.addAllowedHeader("Content-Type");
-        config.addAllowedHeader("Authorization");
-        config.addAllowedHeader("Access-Control-Allow-Origin");
-        config.addAllowedHeader("Access-Control-Allow-Credentials");
-        config.addAllowedHeader("Accept");
-
-        // On autorise les méthodes nécessaires
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS");
-
-        // On configure le max age pour le preflight
-        config.setMaxAge(3600L); // Cache pendant 1h
+        // Important : ajouter les headers exposés
+        config.addExposedHeader("Access-Control-Allow-Origin");
+        config.addExposedHeader("Access-Control-Allow-Methods");
+        config.addExposedHeader("Access-Control-Allow-Headers");
+        config.addExposedHeader("Access-Control-Max-Age");
+        config.addExposedHeader("Access-Control-Allow-Credentials");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
