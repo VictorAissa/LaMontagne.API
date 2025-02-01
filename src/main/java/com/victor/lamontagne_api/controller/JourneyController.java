@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/journey")
+@CrossOrigin
 public class JourneyController {
     private final JourneyService journeyService;
 
