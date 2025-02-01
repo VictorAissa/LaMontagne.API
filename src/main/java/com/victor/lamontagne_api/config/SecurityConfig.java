@@ -33,11 +33,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable()) // Désactive la gestion CORS de Spring Security, car on utilise WebMvcConfigurer
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permet les préflight requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Autoriser les preflight CORS
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -45,5 +46,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 }
