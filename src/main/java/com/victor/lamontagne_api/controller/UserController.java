@@ -14,13 +14,13 @@ public class UserController {
 
     @Autowired
     public UserController(UserService userService) {
-        System.out.println("==== Requête reçue sur /api/user/login ====");
         this.userService = userService;
     }
 
     @PostMapping("/login")
     @ResponseBody
     public String login(@RequestBody LoginRequest req) {
+        System.out.println("==== Requête reçue sur /api/user/login ====");
         return userService.authenticate(req.email(), req.password());
     }
 
