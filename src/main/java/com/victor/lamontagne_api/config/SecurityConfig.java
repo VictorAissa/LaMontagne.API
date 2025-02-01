@@ -21,31 +21,25 @@ import org.springframework.web.filter.CorsFilter;
 })
 public class SecurityConfig {
     private final JWTAuthFilter jwtAuthFilter;
-    private final CorsFilter corsFilter;
 
     @Autowired
-    public SecurityConfig(JWTAuthFilter jwtAuthFilter, CorsFilter corsFilter) {
+    public SecurityConfig(JWTAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.corsFilter = corsFilter;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configure(http))  // Active CORS
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Ajout du filtre CORS avant le filtre JWT
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-                // Puis le filtre JWT
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // OPTIONS toujours permis
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         .anyRequest().authenticated()
-                );
-
-        // Note: J'ai retiré le doublon de sessionManagement qui était présent
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
