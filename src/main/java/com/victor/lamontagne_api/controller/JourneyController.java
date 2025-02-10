@@ -16,7 +16,7 @@ import java.util.List;
 @CrossOrigin(
         origins = "http://localhost:5173",
         allowCredentials = "true",
-        allowedHeaders = "*",
+        allowedHeaders = {"Authorization", "Content-Type", "Accept"},
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
 )
 public class JourneyController {
