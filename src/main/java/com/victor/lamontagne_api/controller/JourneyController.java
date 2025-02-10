@@ -29,6 +29,7 @@ public class JourneyController {
 
     @GetMapping("/user/{userId}")
     public List<JourneyDTO> getAllJourneys(@PathVariable String userId) {
+        System.out.println("==== Requête reçue sur /api/journey/user/" + userId + " ====");
         return journeyService.getAllJourneys(userId);
     }
 

@@ -31,7 +31,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        if (isPublicPath(request.getRequestURI())) {
+        if (isPublicPath(request.getRequestURI(), request)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -61,7 +61,8 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean isPublicPath(String requestURI) {
-        return PUBLIC_PATHS.stream().anyMatch(requestURI::startsWith);
+    private boolean isPublicPath(String requestURI, HttpServletRequest request) {
+        return PUBLIC_PATHS.stream().anyMatch(requestURI::startsWith)
+                || request.getMethod().equals("OPTIONS");
     }
 }
