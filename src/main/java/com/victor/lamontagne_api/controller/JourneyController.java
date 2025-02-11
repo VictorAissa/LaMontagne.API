@@ -14,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/journey")
 @CrossOrigin(
-        origins = "http://localhost:5173",
-        allowCredentials = "true",
-        allowedHeaders = {"Authorization", "Content-Type", "Accept"},
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+    origins = {"http://localhost:5173", "http://localhost:4200"},
+    allowCredentials = "true",
+    allowedHeaders = {"Authorization", "Content-Type", "Accept"},
+    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
 )
 public class JourneyController {
     private final JourneyService journeyService;
