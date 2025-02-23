@@ -2,7 +2,7 @@ package com.victor.lamontagne_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
-import com.victor.lamontagne_api.service.JourneyService;
+import com.victor.lamontagne_api.service.journey.JourneyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;

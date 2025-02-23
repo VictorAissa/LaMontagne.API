@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.service;
+package com.victor.lamontagne_api.service.cloudinary;
 
 public interface CloudinaryService {
     String uploadImage(byte[] image);

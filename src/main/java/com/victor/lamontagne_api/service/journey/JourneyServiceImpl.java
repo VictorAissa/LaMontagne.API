@@ -1,10 +1,11 @@
-package com.victor.lamontagne_api.service;
+package com.victor.lamontagne_api.service.journey;
 
 import com.victor.lamontagne_api.exception.ResourceNotFoundException;
 import com.victor.lamontagne_api.exception.UnauthorizedException;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.model.pojo.Journey;
 import com.victor.lamontagne_api.repository.JourneyRepository;
+import com.victor.lamontagne_api.service.cloudinary.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

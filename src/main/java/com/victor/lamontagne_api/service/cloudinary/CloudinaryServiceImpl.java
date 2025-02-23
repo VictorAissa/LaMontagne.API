@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.service;
+package com.victor.lamontagne_api.service.cloudinary;
 
 import com.cloudinary.Cloudinary;
 import org.springframework.beans.factory.annotation.Autowired;

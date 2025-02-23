@@ -2,6 +2,7 @@ package com.victor.lamontagne_api.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Uploader;
+import com.victor.lamontagne_api.service.cloudinary.CloudinaryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

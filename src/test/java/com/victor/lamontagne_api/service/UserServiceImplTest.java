@@ -4,6 +4,7 @@ import com.victor.lamontagne_api.model.dto.UserDTO;
 import com.victor.lamontagne_api.model.pojo.User;
 import com.victor.lamontagne_api.repository.UserRepository;
 import com.victor.lamontagne_api.security.JWTService;
+import com.victor.lamontagne_api.service.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;

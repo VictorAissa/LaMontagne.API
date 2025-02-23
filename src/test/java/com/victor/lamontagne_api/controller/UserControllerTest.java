@@ -3,7 +3,7 @@ package com.victor.lamontagne_api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.victor.lamontagne_api.model.dto.UserDTO;
 import com.victor.lamontagne_api.model.pojo.LoginRequest;
-import com.victor.lamontagne_api.service.UserService;
+import com.victor.lamontagne_api.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

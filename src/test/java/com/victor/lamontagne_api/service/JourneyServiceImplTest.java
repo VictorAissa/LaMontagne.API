@@ -3,6 +3,8 @@ package com.victor.lamontagne_api.service;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.model.pojo.*;
 import com.victor.lamontagne_api.repository.JourneyRepository;
+import com.victor.lamontagne_api.service.cloudinary.CloudinaryService;
+import com.victor.lamontagne_api.service.journey.JourneyServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

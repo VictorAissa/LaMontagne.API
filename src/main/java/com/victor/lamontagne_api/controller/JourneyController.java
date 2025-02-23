@@ -2,7 +2,7 @@ package com.victor.lamontagne_api.controller;
 
 import com.victor.lamontagne_api.exception.NotImplementedException;
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
-import com.victor.lamontagne_api.service.JourneyService;
+import com.victor.lamontagne_api.service.journey.JourneyService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

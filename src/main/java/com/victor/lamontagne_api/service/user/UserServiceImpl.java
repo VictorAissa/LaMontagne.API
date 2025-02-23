@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.service;
+package com.victor.lamontagne_api.service.user;
 
 import com.victor.lamontagne_api.exception.UnauthorizedException;
 import com.victor.lamontagne_api.model.dto.UserDTO;

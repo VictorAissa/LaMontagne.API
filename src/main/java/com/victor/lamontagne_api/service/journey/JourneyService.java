@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.service;
+package com.victor.lamontagne_api.service.journey;
 
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import org.springframework.web.multipart.MultipartFile;
