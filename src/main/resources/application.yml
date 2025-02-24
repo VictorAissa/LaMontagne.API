@@ -11,9 +11,23 @@ spring:
   profiles:
     active: dev
 
+meteo:
+  metoblue:
+    url: ${METEOBLUE_URL}
+    apikey: ${METEOBLUE_API_KEY}
+  meteofrance:
+    url: ${METEOFRANCE_URL}
+    apikey: ${METEOFRANCE_API_KEY}
+
 app:
   cloudinary:
     url: ${CLOUDINARY_URL}
   security:
     jwt:
       secret: ${JWT_SECRET}
+  meteo:
+    providers:
+      meteoblue:
+        enabled: true
+      meteofrance:
+        enabled: true

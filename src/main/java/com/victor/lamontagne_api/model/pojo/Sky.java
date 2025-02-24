@@ -4,6 +4,7 @@ public enum Sky {
     SUNNY,
     PARTLY_CLOUDY,
     CLOUDY,
-    SNOW,
-    RAIN
+    RAIN,
+    LIGHT_SNOW,
+    HEAVY_SNOW
 }

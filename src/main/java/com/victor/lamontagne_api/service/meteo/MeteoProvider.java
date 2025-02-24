@@ -7,7 +7,7 @@ import java.util.Date;
 public interface MeteoProvider {
     void accept(MeteoVisitor visitor);
 
-    Meteo getMeteoData(double latitude, double longitude, double altitude, Date date);
+    Meteo getMeteoData(double latitude, double longitude, Date date);
 
     Integer getBera(String massifName);
 }

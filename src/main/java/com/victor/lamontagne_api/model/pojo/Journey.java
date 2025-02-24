@@ -61,4 +61,8 @@ public class Journey{
         this.protections = dto.getProtections();
         this.miscellaneous = dto.getMiscellaneous();
     }
+
+    public boolean isFutureJourney() {
+        return date.after(new Date());
+    }
 }
