@@ -4,7 +4,7 @@ spring:
       uri: ${MONGO_URL}
 
 meteo:
-  metoblue:
+  meteoblue:
     url: ${METEOBLUE_URL}
     apikey: ${METEOBLUE_API_KEY}
   meteofrance:

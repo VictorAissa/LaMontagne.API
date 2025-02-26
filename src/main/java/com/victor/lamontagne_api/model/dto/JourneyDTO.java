@@ -1,5 +1,6 @@
 package com.victor.lamontagne_api.model.dto;
 
+import com.victor.lamontagne_api.model.enums.Season;
 import com.victor.lamontagne_api.model.pojo.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

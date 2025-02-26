@@ -1,6 +1,7 @@
 package com.victor.lamontagne_api.service;
 
 import com.victor.lamontagne_api.model.dto.JourneyDTO;
+import com.victor.lamontagne_api.model.enums.Season;
 import com.victor.lamontagne_api.model.pojo.*;
 import com.victor.lamontagne_api.repository.JourneyRepository;
 import com.victor.lamontagne_api.service.cloudinary.CloudinaryService;

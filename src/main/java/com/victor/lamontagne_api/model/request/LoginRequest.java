@@ -1,4 +1,4 @@
-package com.victor.lamontagne_api.model.pojo;
+package com.victor.lamontagne_api.model.request;
 
 import jakarta.validation.constraints.NotBlank;
 

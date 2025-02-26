@@ -1,6 +1,6 @@
 package com.victor.lamontagne_api.controller;
 
-import com.victor.lamontagne_api.model.pojo.LoginRequest;
+import com.victor.lamontagne_api.model.request.LoginRequest;
 import com.victor.lamontagne_api.model.dto.UserDTO;
 import com.victor.lamontagne_api.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

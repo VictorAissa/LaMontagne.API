@@ -1,10 +1,13 @@
 package com.victor.lamontagne_api.service.meteo;
 
 import com.victor.lamontagne_api.config.MeteoBlueConfig;
-import com.victor.lamontagne_api.exception.NotImplementedException;
+import com.victor.lamontagne_api.model.enums.Direction;
+import com.victor.lamontagne_api.model.enums.Sky;
+import com.victor.lamontagne_api.model.external.response.meteoblue.DataDay;
+import com.victor.lamontagne_api.model.external.response.meteoblue.MeteoBlueResponse;
 import com.victor.lamontagne_api.model.pojo.*;
-import lombok.Getter;
-import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -13,12 +16,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @ConditionalOnProperty(name = "app.meteo.providers.meteoblue.enabled", havingValue = "true")
 public class MeteoBlueProvider implements MeteoProvider {
     private final WebClient webClient;
     private final MeteoBlueConfig meteoblueConfig;
+    private static final Logger logger = LoggerFactory.getLogger(MeteoBlueProvider.class);
 
     @Autowired
     public MeteoBlueProvider(WebClient meteoblueWebClient, MeteoBlueConfig meteoblueConfig) {
@@ -33,31 +38,73 @@ public class MeteoBlueProvider implements MeteoProvider {
 
     @Override
     public Meteo getMeteoData(double latitude, double longitude, Date journeyDate) {
-        String url = meteoblueConfig.buildRequestUrl(latitude, longitude);
+        try {
+            String url = meteoblueConfig.buildRequestUrl(latitude, longitude);
+            logger.debug("Calling MeteoBluе API with URL: {}", url);
 
-        MeteoBlueResponse response = webClient.get()
-                .uri(url)
-                .retrieve()
-                .bodyToMono(MeteoBlueResponse.class)
-                .block();
+            String responseBody = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        int dayIndex = findDayIndex(response, journeyDate);
+            logger.debug("Raw response: {}", responseBody);
 
-        return mapToMeteo(response, dayIndex);
+            // Utiliser le même webClient pour récupérer en objet
+            MeteoBlueResponse response = webClient.get()
+                    .uri(url)
+                    .retrieve()
+                    .bodyToMono(MeteoBlueResponse.class)
+                    .block();
+
+            if (response == null) {
+                logger.error("Null response from MeteoBluе API");
+                return createDefaultMeteo();
+            }
+
+            if (response.getDataDay() == null) {
+                logger.error("Null dataDay in response");
+                return createDefaultMeteo();
+            }
+
+            int dayIndex = findDayIndex(response, journeyDate);
+            return mapToMeteo(response, dayIndex);
+        } catch (Exception e) {
+            logger.error("Error fetching meteo data: {}", e.getMessage(), e);
+            return createDefaultMeteo();
+        }
+    }
+
+    private Meteo createDefaultMeteo() {
+        // Valeurs par défaut en cas d'erreur
+        return new Meteo(
+                Sky.PARTLY_CLOUDY,
+                new Temperature(0, 0),
+                new Iso(0, 0),
+                new Wind(Direction.N, 0),
+                0
+        );
     }
 
     @Override
     public Integer getBera(String massifName) {
-        throw new NotImplementedException("No BERA available in MeteoBlue");
+        throw new UnsupportedOperationException("No BERA available in MeteoBluе");
     }
 
     private Meteo mapToMeteo(MeteoBlueResponse response, int dayIndex) {
         DataDay dayData = response.getDataDay();
-        Sky sky = mapPictocodeToSky(dayData.getPictocode()[dayIndex]);
+
+        // Vérification des données pour éviter les NullPointerException
+        if (dayData.getPictocode() == null || dayData.getPictocode().size() <= dayIndex) {
+            logger.error("Missing pictocode data for day index: {}", dayIndex);
+            return createDefaultMeteo();
+        }
+
+        Sky sky = mapPictocodeToSky(dayData.getPictocode().get(dayIndex));
 
         Temperature temperature = new Temperature(
-                (int) Math.round(dayData.getTemperatureMax()[dayIndex]),
-                (int) Math.round(dayData.getTemperatureMin()[dayIndex])
+                (int) Math.round(dayData.getTemperatureMax().get(dayIndex)),
+                (int) Math.round(dayData.getTemperatureMin().get(dayIndex))
         );
 
         Iso iso = new Iso(
@@ -66,24 +113,48 @@ public class MeteoBlueProvider implements MeteoProvider {
         );
 
         Wind wind = new Wind(
-                mapWindDirection(dayData.getWinddirection()[dayIndex]),
+                mapWindDirection(dayData.getWinddirection().get(dayIndex)),
                 // Conversion m/s en km/h
-                (int)(dayData.getWindspeedMean()[dayIndex] * 3.6)
+                (int)(dayData.getWindspeedMean().get(dayIndex) * 3.6)
         );
 
         return new Meteo(sky, temperature, iso, wind, 0); // BERA sera ajouté par MeteoFrance
     }
 
     private int getIsoZeroDay(MeteoBlueResponse response, int dayIndex) {
-        // Convertir l'index jour en index pour les données 6h (milieu de journée)
-        int index6h = response.getDataDay().getIndexto6hvaluesStart()[dayIndex] + 2;
-        return (int) response.getData6h().getFreezinglevelheigtMean()[index6h];
+        try {
+            // Convertir l'index jour en index pour les données 6h (milieu de journée)
+            int index6h = response.getDataDay().getIndexto6hvaluesStart().get(dayIndex) + 2;
+
+            // Vérifier que l'index est valide
+            if (index6h >= response.getData6h().getFreezinglevelheightMean().size()) {
+                logger.warn("Index 6h out of bounds for iso zero day: {}", index6h);
+                return 0;
+            }
+
+            return (int) Math.round(response.getData6h().getFreezinglevelheightMean().get(index6h));
+        } catch (Exception e) {
+            logger.error("Error getting iso zero day: {}", e.getMessage());
+            return 0;
+        }
     }
 
     private int getIsoZeroNight(MeteoBlueResponse response, int dayIndex) {
-        // Convertir l'index jour en index pour les données 6h (milieu de nuit)
-        int index6h = response.getDataDay().getIndexto6hvaluesStart()[dayIndex];
-        return (int) response.getData6h().getFreezinglevelheigtMean()[index6h];
+        try {
+            // Convertir l'index jour en index pour les données 6h (milieu de nuit)
+            int index6h = response.getDataDay().getIndexto6hvaluesStart().get(dayIndex);
+
+            // Vérifier que l'index est valide
+            if (index6h >= response.getData6h().getFreezinglevelheightMean().size()) {
+                logger.warn("Index 6h out of bounds for iso zero night: {}", index6h);
+                return 0;
+            }
+
+            return (int) Math.round(response.getData6h().getFreezinglevelheightMean().get(index6h));
+        } catch (Exception e) {
+            logger.error("Error getting iso zero night: {}", e.getMessage());
+            return 0;
+        }
     }
 
     private Sky mapPictocodeToSky(int pictocode) {
@@ -125,41 +196,15 @@ public class MeteoBlueProvider implements MeteoProvider {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
-        for (int i = 0; i < response.getDataDay().getTime().length; i++) {
-            LocalDate responseDate = LocalDate.parse(response.getDataDay().getTime()[i]);
+        List<String> timeList = response.getDataDay().getTime();
+        for (int i = 0; i < timeList.size(); i++) {
+            LocalDate responseDate = LocalDate.parse(timeList.get(i));
             if (responseDate.equals(targetDate)) {
                 return i;
             }
         }
 
-        // Si la date est au-delà des 7 jours, prendre le dernier jour disponible
-        return Math.min(6, response.getDataDay().getTime().length - 1);
+        // Si la date est au-delà des jours disponibles, prendre le dernier jour disponible
+        return Math.min(6, timeList.size() - 1);
     }
 }
-
-@Getter
-@Setter
-class MeteoBlueResponse {
-    private DataDay dataDay;
-    private Data6h data6h;
-}
-
-@Getter
-@Setter
-class DataDay {
-    private String[] time;
-    private int[] pictocode;
-    private double[] temperatureMax;
-    private double[] temperatureMin;
-    private int[] winddirection;
-    private double[] windspeedMean;
-    private int[] indexto6hvaluesStart;
-}
-
-@Getter
-@Setter
-class Data6h {
-    private String[] time;
-    private double[] freezinglevelheigtMean;
-}
-
