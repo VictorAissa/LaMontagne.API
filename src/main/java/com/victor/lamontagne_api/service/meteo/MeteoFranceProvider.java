@@ -112,7 +112,7 @@ public class MeteoFranceProvider implements MeteoProvider {
             String risqueJStr = getXmlValue(doc, "//RISQUE/@RISQUEMAXI");
             String risqueJ2Str = getXmlValue(doc, "//RISQUE/@RISQUEMAXIJ2");
             if (risqueJStr != null && !risqueJStr.isEmpty()) {
-                risqueJ2= Integer.parseInt(risqueJStr);
+                risqueJ= Integer.parseInt(risqueJStr);
             }
             if (risqueJ2Str != null && !risqueJ2Str.isEmpty()) {
                 risqueJ2 = Integer.parseInt(risqueJ2Str);

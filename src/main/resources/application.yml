@@ -31,3 +31,6 @@ app:
         enabled: true
       meteofrance:
         enabled: true
+  data:
+    massifs:
+      geojsonFile: /data/Metadata_massif_DP_2024_20240215.geojson

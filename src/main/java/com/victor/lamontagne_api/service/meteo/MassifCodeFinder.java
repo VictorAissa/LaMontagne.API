@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.victor.lamontagne_api.model.pojo.GeoPoint;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.Getter;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.Polygon;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -16,10 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@ConfigurationProperties(prefix = "app.data.massifs")
+@Data
 public class MassifCodeFinder {
-
     private final List<MassifInfo> massifs = new ArrayList<>();
     private final GeometryFactory geometryFactory = new GeometryFactory();
+    private String geojsonFile;
 
     @PostConstruct
     public void init() {
@@ -44,14 +49,13 @@ public class MassifCodeFinder {
 
     private void loadMassifsFromGeoJson() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        Resource resource = new ClassPathResource("/data/Metadata_massif_DP_2024_20240215.geojson");
+        Resource resource = new ClassPathResource(geojsonFile);
 
         if (!resource.exists()) {
-            throw new IOException("GeoJSON file not found: data/Metadata_massif_DP_2024_20240215.geojson");
+            throw new IOException(String.join("", "GeoJSON file not found: ", geojsonFile));
         }
 
         try (InputStream inputStream = resource.getInputStream()) {
-
             JsonNode rootNode = mapper.readTree(inputStream);
             JsonNode features = rootNode.path("features");
 
@@ -98,7 +102,7 @@ public class MassifCodeFinder {
             }
         }
     }
-    //@Getter
+
     static class MassifInfo {
         private final Integer code;
         private final String title;

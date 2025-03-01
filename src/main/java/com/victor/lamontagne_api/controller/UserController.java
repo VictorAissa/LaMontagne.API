@@ -25,7 +25,6 @@ public class UserController {
     @PostMapping("/login")
     @ResponseBody
     public String login(@RequestBody LoginRequest req) {
-        System.out.println("==== Requête reçue sur /api/user/login ====");
         return userService.authenticate(req.email(), req.password());
     }
 
