@@ -77,7 +77,7 @@ public class MeteoBlueProvider implements MeteoProvider {
     }
 
     @Override
-    public Integer getBera(String massifName) {
+    public Integer getBera(String massifId) {
         throw new UnsupportedOperationException("No BERA available in MeteoBluе");
     }
 

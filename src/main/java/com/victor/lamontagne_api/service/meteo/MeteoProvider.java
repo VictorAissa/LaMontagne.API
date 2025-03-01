@@ -9,5 +9,5 @@ public interface MeteoProvider {
 
     Meteo getMeteoData(double latitude, double longitude, Date date);
 
-    Integer getBera(String massifName);
+    Integer getBera(String massifId);
 }
