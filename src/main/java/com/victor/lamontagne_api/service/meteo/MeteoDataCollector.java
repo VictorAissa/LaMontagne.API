@@ -34,50 +34,14 @@ public class MeteoDataCollector implements MeteoVisitor {
 
     @Override
     public void visitMeteoFrance(MeteoFranceProvider provider) {
-        if (isInFrance(new GeoPoint(latitude, longitude))) {
-            meteo.setBera(provider.getBera(getMassifName(new GeoPoint(latitude, longitude))));
+        if (meteo == null) {
+            meteo = new Meteo();
         }
-    }
 
-    private boolean isInFrance(GeoPoint point) {
-        return point.getLatitude() >= 41.0 && point.getLatitude() <= 51.5 &&
-                point.getLongitude() >= -5.0 && point.getLongitude() <= 10.0;
-    }
+        Integer beraIndex = provider.getBera(new GeoPoint(latitude, longitude), date);
 
-    private String getMassifName(GeoPoint point) {
-        double lat = point.getLatitude();
-        double lon = point.getLongitude();
-
-        // Alpes du Nord
-        if (lat >= 45.0 && lat <= 46.5 && lon >= 5.5 && lon <= 7.5) {
-            return "ALPES_DU_NORD";
-        }
-        // Alpes du Sud
-        else if (lat >= 43.5 && lat <= 45.0 && lon >= 5.5 && lon <= 7.5) {
-            return "ALPES_DU_SUD";
-        }
-        // Pyrénées
-        else if (lat >= 42.5 && lat <= 43.5 && lon >= -1.0 && lon <= 3.0) {
-            return "PYRENEES";
-        }
-        // Jura
-        else if (lat >= 46.0 && lat <= 47.5 && lon >= 5.0 && lon <= 7.0) {
-            return "JURA";
-        }
-        // Vosges
-        else if (lat >= 47.5 && lat <= 49.0 && lon >= 6.0 && lon <= 8.0) {
-            return "VOSGES";
-        }
-        // Corse
-        else if (lat >= 41.5 && lat <= 43.0 && lon >= 8.5 && lon <= 9.5) {
-            return "CORSE";
-        }
-        // Massif Central
-        else if (lat >= 44.0 && lat <= 46.0 && lon >= 2.0 && lon <= 4.5) {
-            return "MASSIF_CENTRAL";
-        }
-        else {
-            return "INCONNU";
+        if (beraIndex != null) {
+            meteo.setBera(beraIndex);
         }
     }
 }

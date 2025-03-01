@@ -42,15 +42,6 @@ public class MeteoBlueProvider implements MeteoProvider {
             String url = meteoblueConfig.buildRequestUrl(latitude, longitude);
             logger.debug("Calling MeteoBluе API with URL: {}", url);
 
-            String responseBody = webClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            logger.debug("Raw response: {}", responseBody);
-
-            // Utiliser le même webClient pour récupérer en objet
             MeteoBlueResponse response = webClient.get()
                     .uri(url)
                     .retrieve()
@@ -76,7 +67,6 @@ public class MeteoBlueProvider implements MeteoProvider {
     }
 
     private Meteo createDefaultMeteo() {
-        // Valeurs par défaut en cas d'erreur
         return new Meteo(
                 Sky.PARTLY_CLOUDY,
                 new Temperature(0, 0),
@@ -94,7 +84,6 @@ public class MeteoBlueProvider implements MeteoProvider {
     private Meteo mapToMeteo(MeteoBlueResponse response, int dayIndex) {
         DataDay dayData = response.getDataDay();
 
-        // Vérification des données pour éviter les NullPointerException
         if (dayData.getPictocode() == null || dayData.getPictocode().size() <= dayIndex) {
             logger.error("Missing pictocode data for day index: {}", dayIndex);
             return createDefaultMeteo();
@@ -114,19 +103,16 @@ public class MeteoBlueProvider implements MeteoProvider {
 
         Wind wind = new Wind(
                 mapWindDirection(dayData.getWinddirection().get(dayIndex)),
-                // Conversion m/s en km/h
                 (int)(dayData.getWindspeedMean().get(dayIndex) * 3.6)
         );
 
-        return new Meteo(sky, temperature, iso, wind, 0); // BERA sera ajouté par MeteoFrance
+        return new Meteo(sky, temperature, iso, wind, 0);
     }
 
     private int getIsoZeroDay(MeteoBlueResponse response, int dayIndex) {
         try {
-            // Convertir l'index jour en index pour les données 6h (milieu de journée)
             int index6h = response.getDataDay().getIndexto6hvaluesStart().get(dayIndex) + 2;
 
-            // Vérifier que l'index est valide
             if (index6h >= response.getData6h().getFreezinglevelheightMean().size()) {
                 logger.warn("Index 6h out of bounds for iso zero day: {}", index6h);
                 return 0;
@@ -141,10 +127,8 @@ public class MeteoBlueProvider implements MeteoProvider {
 
     private int getIsoZeroNight(MeteoBlueResponse response, int dayIndex) {
         try {
-            // Convertir l'index jour en index pour les données 6h (milieu de nuit)
             int index6h = response.getDataDay().getIndexto6hvaluesStart().get(dayIndex);
 
-            // Vérifier que l'index est valide
             if (index6h >= response.getData6h().getFreezinglevelheightMean().size()) {
                 logger.warn("Index 6h out of bounds for iso zero night: {}", index6h);
                 return 0;
@@ -179,7 +163,6 @@ public class MeteoBlueProvider implements MeteoProvider {
     }
 
     private Direction mapWindDirection(int direction) {
-        // Simplification de la direction du vent en 8 directions
         if (direction >= 337.5 || direction < 22.5) return Direction.N;
         if (direction >= 22.5 && direction < 67.5) return Direction.NE;
         if (direction >= 67.5 && direction < 112.5) return Direction.E;
@@ -191,7 +174,6 @@ public class MeteoBlueProvider implements MeteoProvider {
     }
 
     private int findDayIndex(MeteoBlueResponse response, Date journeyDate) {
-        // Trouver l'index du jour correspondant à la date de la course
         LocalDate targetDate = journeyDate.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
@@ -204,7 +186,6 @@ public class MeteoBlueProvider implements MeteoProvider {
             }
         }
 
-        // Si la date est au-delà des jours disponibles, prendre le dernier jour disponible
         return Math.min(6, timeList.size() - 1);
     }
 }
