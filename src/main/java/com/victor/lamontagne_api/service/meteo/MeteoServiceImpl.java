@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class MeteoServiceImpl implements MeteoService {
-    private final List<MeteoProvider> providers;
+    final List<MeteoProvider> providers;
     private final JourneyRepository journeyRepository;
 
     @Autowired
@@ -38,7 +38,7 @@ public class MeteoServiceImpl implements MeteoService {
 
     @Override
     public Meteo getMeteoData(double latitude, double longitude, Date date) {
-        MeteoDataCollector collector = new MeteoDataCollector(latitude, longitude, date);
+        MeteoDataCollector collector = createMeteoDataCollector(latitude, longitude, date);
         providers.forEach(provider -> provider.accept(collector));
         return collector.getMeteo();
     }
@@ -58,6 +58,10 @@ public class MeteoServiceImpl implements MeteoService {
         journeyRepository.save(journey);
 
         return updatedMeteo;
+    }
+
+    protected MeteoDataCollector createMeteoDataCollector(double latitude, double longitude, Date date) {
+        return new MeteoDataCollector(latitude, longitude, date);
     }
 
     boolean shouldUpdateMeteo(Date date) {

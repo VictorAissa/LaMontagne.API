@@ -103,6 +103,7 @@ public class MassifCodeFinder {
         }
     }
 
+    @Getter
     static class MassifInfo {
         private final Integer code;
         private final String title;
@@ -112,18 +113,6 @@ public class MassifCodeFinder {
             this.code = code;
             this.title = title;
             this.geometry = geometry;
-        }
-
-        public Integer getCode() {
-            return code;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public Geometry getGeometry() {
-            return geometry;
         }
     }
 }
