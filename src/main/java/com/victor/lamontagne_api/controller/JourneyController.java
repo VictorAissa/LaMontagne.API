@@ -38,8 +38,8 @@ public class JourneyController {
         return journeyService.getJourneyById(id, userId);
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public JourneyDTO createJourney(
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public JourneyDTO createJourneyWithFiles(
             @RequestPart("journeyData") JourneyDTO journey,
             @RequestPart(value = "files", required = false) MultipartFile[] files,
             HttpServletRequest request
@@ -48,17 +48,35 @@ public class JourneyController {
         return journeyService.createJourney(journey, files, userId);
     }
 
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public JourneyDTO createJourney(
+            @RequestBody JourneyDTO journey,
+            HttpServletRequest request
+    ) {
+        String userId = (String) request.getAttribute("userId");
+        return journeyService.createJourney(journey, null, userId);
+    }
+
     @PutMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public JourneyDTO updateJourney(
+    public JourneyDTO updateJourneyWithFiles(
             @RequestPart("journeyData") JourneyDTO journey,
             @RequestPart(value = "files", required = false) MultipartFile[] files,
             HttpServletRequest request
     ) {
         String userId = (String) request.getAttribute("userId");
         return journeyService.updateJourney(journey.getId(), journey, files, userId);
+    }
+
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public JourneyDTO updateJourney(
+            @RequestBody JourneyDTO journey,
+            HttpServletRequest request
+    ) {
+        String userId = (String) request.getAttribute("userId");
+        return journeyService.updateJourney(journey.getId(), journey, null, userId);
     }
 
     @DeleteMapping("/{id}")

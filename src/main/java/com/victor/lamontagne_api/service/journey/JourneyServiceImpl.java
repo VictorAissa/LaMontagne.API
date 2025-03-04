@@ -89,6 +89,8 @@ public class JourneyServiceImpl implements JourneyService {
             throw new UnauthorizedException("You don't have access to this journey");
         }
 
+        journeyDto.setUserId(userId);
+
         if (files != null && files.length > 0) {
             List<String> pictureUrls = new ArrayList<>(journeyDto.getPictures());
 

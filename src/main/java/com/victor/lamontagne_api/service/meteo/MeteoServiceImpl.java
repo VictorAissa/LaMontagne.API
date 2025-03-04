@@ -64,7 +64,7 @@ public class MeteoServiceImpl implements MeteoService {
         return new MeteoDataCollector(latitude, longitude, date);
     }
 
-    boolean shouldUpdateMeteo(Date date) {
+    public boolean shouldUpdateMeteo(Date date) {
         return ChronoUnit.DAYS.between(LocalDate.now(), date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()) <= 7;
