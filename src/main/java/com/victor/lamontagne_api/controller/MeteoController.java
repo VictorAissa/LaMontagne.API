@@ -5,7 +5,6 @@ import com.victor.lamontagne_api.model.request.MeteoRequest;
 import com.victor.lamontagne_api.service.meteo.MeteoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,7 +16,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/meteo")
 @CrossOrigin(
-        origins = {"http://localhost:5173", "http://localhost:4200"},
+        origins = {"http://localhost:5173", "https://lamontagneapp.vercel.app/"},
         allowCredentials = "true",
         allowedHeaders = {"Authorization", "Content-Type", "Accept"},
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
