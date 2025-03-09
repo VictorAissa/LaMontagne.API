@@ -132,13 +132,9 @@ public class MeteoFranceProvider implements MeteoProvider {
                 result.put("source", "Prévision BERA à J+1");
             }
             else if (dateJ2 != null && journeyDate.isAfter(dateJ2)) {
-                result.put("risque", risqueJ2);
-                result.put("source", "Prévision BERA prolongée - À actualiser");
+                result.put("risque", 0);
+                result.put("source", "Prévision BERA inconnue");
                 result.put("warning", "Date au-delà des prévisions disponibles");
-            }
-            else if (journeyDate.isBefore(dateJ)) {
-                result.put("risque", null);
-                result.put("source", "Pas de données disponibles pour cette date");
             }
             else {
                 result.put("risque", null);
