@@ -126,13 +126,36 @@ public class MeteoBlueProviderTest {
     void testMapPictocodeToSky() {
         testPictocode(1, Sky.SUNNY);
         testPictocode(3, Sky.SUNNY);
-        testPictocode(4, Sky.PARTLY_CLOUDY);
+        testPictocode(8, Sky.PARTLY_CLOUDY);
         testPictocode(7, Sky.PARTLY_CLOUDY);
-        testPictocode(9, Sky.CLOUDY);
-        testPictocode(12, Sky.RAIN);
-        testPictocode(15, Sky.LIGHT_SNOW);
-        testPictocode(18, Sky.HEAVY_SNOW);
+        testPictocode(16, Sky.CLOUDY);
+        testPictocode(28, Sky.LIGHT_RAIN);
+        testPictocode(25, Sky.HEAVY_RAIN);
+        testPictocode(24, Sky.LIGHT_SNOW);
+        testPictocode(26, Sky.HEAVY_SNOW);
+        testPictocode(29, Sky.HEAVY_SNOW);
         testPictocode(99, Sky.PARTLY_CLOUDY);
+    }
+
+    private Sky mapPictocodeToSky(int pictocode) {
+        switch(pictocode) {
+            case 1: case 2: case 3: case 4: case 5: case 6: case 13: case 14: case 15:
+                return Sky.SUNNY;
+            case 7: case 8: case 9: case 10: case 11: case 12:
+                return Sky.PARTLY_CLOUDY;
+            case 16: case 17: case 18: case 19: case 20: case 21: case 22:
+                return Sky.CLOUDY;
+            case 28: case 31: case 33:
+                return Sky.LIGHT_RAIN;
+            case 25: case 27: case 30:
+                return Sky.HEAVY_RAIN;
+            case 24: case 32: case 34: case 35:
+                return Sky.LIGHT_SNOW;
+            case 26: case 29:
+                return Sky.HEAVY_SNOW;
+            default:
+                return Sky.PARTLY_CLOUDY;
+        }
     }
 
     private void testPictocode(int pictocode, Sky expectedSky) {
