@@ -152,7 +152,7 @@ public class MeteoBlueProviderTest {
                 return Sky.SUNNY;
             case 3: case 7: case 10:
                 return Sky.PARTLY_CLOUDY;
-            case 4 case 5:
+            case 4: case 5:
                 return Sky.CLOUDY;
             case 7: case 12: case 16:
                 return Sky.LIGHT_RAIN;
