@@ -125,15 +125,24 @@ public class MeteoBlueProviderTest {
     @Test
     void testMapPictocodeToSky() {
         testPictocode(1, Sky.SUNNY);
-        testPictocode(3, Sky.SUNNY);
-        testPictocode(8, Sky.PARTLY_CLOUDY);
+        testPictocode(2, Sky.SUNNY);
+        testPictocode(3, Sky.PARTLY_CLOUDY);
         testPictocode(7, Sky.PARTLY_CLOUDY);
-        testPictocode(16, Sky.CLOUDY);
-        testPictocode(28, Sky.LIGHT_RAIN);
-        testPictocode(25, Sky.HEAVY_RAIN);
-        testPictocode(24, Sky.LIGHT_SNOW);
-        testPictocode(26, Sky.HEAVY_SNOW);
-        testPictocode(29, Sky.HEAVY_SNOW);
+        testPictocode(10, Sky.PARTLY_CLOUDY);
+        testPictocode(4, Sky.CLOUDY);
+        testPictocode(5, Sky.CLOUDY);
+        testPictocode(7, Sky.LIGHT_RAIN);
+        testPictocode(12, Sky.LIGHT_RAIN);
+        testPictocode(16, Sky.LIGHT_RAIN);
+        testPictocode(6, Sky.HEAVY_RAIN);
+        testPictocode(8, Sky.HEAVY_RAIN);
+        testPictocode(14, Sky.HEAVY_RAIN);
+        testPictocode(10, Sky.LIGHT_SNOW);
+        testPictocode(11, Sky.LIGHT_SNOW);
+        testPictocode(13, Sky.LIGHT_SNOW);
+        testPictocode(17, Sky.LIGHT_SNOW);
+        testPictocode(9, Sky.HEAVY_SNOW);
+        testPictocode(15, Sky.HEAVY_SNOW);
         testPictocode(99, Sky.PARTLY_CLOUDY);
     }
 
