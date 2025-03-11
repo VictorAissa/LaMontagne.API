@@ -150,7 +150,7 @@ public class MeteoBlueProviderTest {
         switch(pictocode) {
             case 1: case 2:
                 return Sky.SUNNY;
-            case 3: case 7: case 10:
+            case 3:
                 return Sky.PARTLY_CLOUDY;
             case 4: case 5:
                 return Sky.CLOUDY;
