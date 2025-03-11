@@ -101,7 +101,7 @@ public class JourneyServiceImpl implements JourneyService {
                         String url = cloudinaryService.uploadImage(file.getBytes());
                         pictureUrls.add(url);
                     } else if (file.getOriginalFilename() != null && file.getOriginalFilename().endsWith(".gpx")) {
-                        if (existingJourney.getItinerary().getGpx() != null) {
+                        if (existingJourney.getItinerary().getGpx() != null && !existingJourney.getItinerary().getGpx().isEmpty()) {
                             cloudinaryService.deleteFile(cloudinaryService.extractPublicId(existingJourney.getItinerary().getGpx()));
                         }
                         String url = cloudinaryService.uploadGpx(file.getBytes());
