@@ -143,19 +143,19 @@ public class MeteoBlueProvider implements MeteoProvider {
 
     private Sky mapPictocodeToSky(int pictocode) {
         switch(pictocode) {
-            case 1: case 2: case 3: case 4: case 5: case 6: case 13: case 14: case 15:
+            case 1: case 2:
                 return Sky.SUNNY;
-            case 7: case 8: case 9: case 10: case 11: case 12:
+            case 3: case 7: case 10:
                 return Sky.PARTLY_CLOUDY;
-            case 16: case 17: case 18: case 19: case 20: case 21: case 22:
+            case 4 case 5:
                 return Sky.CLOUDY;
-            case 28: case 31: case 33:
+            case 7: case 12: case 16:
                 return Sky.LIGHT_RAIN;
-            case 25: case 27: case 30:
+            case 6: case 8: case 14:
                 return Sky.HEAVY_RAIN;
-            case 24: case 32: case 34: case 35:
+            case 10: case 11: case 13: case 17:
                 return Sky.LIGHT_SNOW;
-            case 26: case 29:
+            case 9: case 15:
                 return Sky.HEAVY_SNOW;
             default:
                 return Sky.PARTLY_CLOUDY;
