@@ -6,6 +6,8 @@ import com.victor.lamontagne_api.model.dto.JourneyDTO;
 import com.victor.lamontagne_api.model.pojo.Journey;
 import com.victor.lamontagne_api.repository.JourneyRepository;
 import com.victor.lamontagne_api.service.cloudinary.CloudinaryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
 public class JourneyServiceImpl implements JourneyService {
     private final JourneyRepository journeyRepository;
     private final CloudinaryService cloudinaryService;
+    private final Logger logger;
 
     @Autowired
     public JourneyServiceImpl(JourneyRepository journeyRepository, CloudinaryService cloudinaryService) {
         this.journeyRepository = Objects.requireNonNull(journeyRepository, "JourneyRepository cannot be null");
         this.cloudinaryService = Objects.requireNonNull(cloudinaryService, "CloudinaryService cannot be null");
+        this.logger = LoggerFactory.getLogger(JourneyServiceImpl.class);
     }
 
     @Override
@@ -91,6 +95,19 @@ public class JourneyServiceImpl implements JourneyService {
 
         journeyDto.setUserId(userId);
 
+        List<String> existingPictures = existingJourney.getPictures();
+        List<String> newPictures = journeyDto.getPictures();
+
+        for (String existingUrl : existingPictures) {
+            if (!newPictures.contains(existingUrl)) {
+                try {
+                    cloudinaryService.deleteFile(cloudinaryService.extractPublicId(existingUrl));
+                } catch (Exception e) {
+                    logger.error("Error deleting picture from Cloudinary: " + existingUrl, e);
+                }
+            }
+        }
+
         if (files != null && files.length > 0) {
             List<String> pictureUrls = new ArrayList<>(journeyDto.getPictures());
 
@@ -135,7 +152,7 @@ public class JourneyServiceImpl implements JourneyService {
             }
         }
 
-        if (journey.getItinerary().getGpx() != null) {
+        if (journey.getItinerary().getGpx() != null && !journey.getItinerary().getGpx().isEmpty()) {
             cloudinaryService.deleteFile(cloudinaryService.extractPublicId(journey.getItinerary().getGpx()));
         }
 
